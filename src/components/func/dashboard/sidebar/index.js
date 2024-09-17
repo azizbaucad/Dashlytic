@@ -32,7 +32,7 @@ export const Sidebar = ({ activeLink }) => {
       url: null,
       subMenus: [
         { name: 'Accueil', active: 'dashboard', url: routes.pages.dashboard.initial },
-        { name: 'Finance', active: 'ofms', url: routes.pages.ofms.initial },/* 
+        { name: 'TbordDep', active: 'ofms', url: routes.pages.ofms.initial },/* 
         { name: 'Comptabilité', active: 'dmgp', url: routes.pages.dmgp.initial }, */
       ],
     },

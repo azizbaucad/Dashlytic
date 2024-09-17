@@ -28,7 +28,10 @@ import { BsPlusLg } from 'react-icons/bs';
 import { TagTitle } from '@components/common/title';
 import { ValuesData } from '@components/common/data/values';
 import { GiCash } from 'react-icons/gi';
-import { HorizontalBarChart2 } from '@components/common/charts/barcharts';
+import {
+  HorizontalBarChart,
+  HorizontalBarChart2,
+} from '@components/common/charts/barcharts';
 import { scroll_customize } from '@components/common/styleprops';
 import {
   HightlightContent,
@@ -41,7 +44,9 @@ import {
 import moment from 'moment';
 import { DataTableGenTest } from '@components/common/tables';
 import { FcLineChart } from 'react-icons/fc';
-import { LineChartsParcOM } from '@components/common/charts/linecharts';
+import { LineChartsParcOM, LineChartsParcOMV2 } from '@components/common/charts/linecharts';
+import { PieCharts, PieCharts2 } from '@components/common/charts/piecharts';
+import { TabsPanelItem } from '@components/common/tabs';
 
 export default function DescFormPage(props) {
   const router = useRouter();
@@ -57,31 +62,30 @@ export default function DescFormPage(props) {
   const simulatedData = [
     {
       id: 1,
-      title: 'Réunion avec les partenaires internationaux',
-      description: 'Discussion sur les projets de coopération en cours.',
-      direction: 'Direction Internationale', // Nouvelle propriété pour la direction
+      title: 'Lorem ipsum dolor sit amet',
+      description: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      direction: 'Lorem ipsum',
       status: { name: 'realizes', label: 'Réalisés' },
       date: '2024-08-01',
     },
     {
       id: 2,
-      title: 'Problèmes logistiques',
-      description:
-        'Difficultés dans la distribution des ressources aux régions éloignées.',
-      direction: 'Direction Logistique', // Nouvelle propriété pour la direction
+      title: 'Ut enim ad minim veniam',
+      description: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      direction: 'Lorem ipsum',
       status: { name: 'difficults', label: 'Difficultés' },
       date: '2024-08-03',
     },
     {
       id: 3,
-      title: 'Problèmes logistiques',
-      description:
-        'Difficultés dans la distribution des ressources aux régions éloignées.',
-      direction: 'Direction Logistique', // Nouvelle propriété pour la direction
+      title: 'Duis aute irure dolor in reprehenderit',
+      description: 'In voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      direction: 'Lorem ipsum',
       status: { name: 'difficults', label: 'Difficultés' },
       date: '2024-08-03',
     },
   ];
+  
 
   const displayHighlight = (highligh, i) => (
     <HightlightContent
@@ -128,29 +132,29 @@ export default function DescFormPage(props) {
   const ParcDataMobile = [
     {
       id: 1,
-      part: 'En cours',
-      percent: 50,
+      part: 'Kpi1',
+      percent: 40,
     },
     {
       id: 2,
-      part: 'En attente',
+      part: 'Kpi2',
       percent: 30,
     },
     {
       id: 3,
-      part: 'Réalisé',
-      percent: 10,
+      part: 'Kpi3',
+      percent: 30,
     },
   ];
 
-  const backColor = ['#083344', '#083344', '#083344', '#083344'];
+  const backColor = ['#0369a1', '#075985', '#0c4a6e'];
 
   const data_ParcMobile = {
     labels: ParcDataMobile?.map((item) => item.part),
     datasets: [
       {
         barThickness: ParcDataMobile?.map((item) =>
-          isNaN(item.percent) ? 0.1 : 25
+          isNaN(item.percent) ? 0.1 : 20
         ),
         barPercentage: 0,
         label: 'Pourcentage',
@@ -169,7 +173,7 @@ export default function DescFormPage(props) {
         w={'100%'}
         bg="#cbd5e1"
         borderColor="#bfbfbf"
-        h={'calc(130vh - 5px)'}
+        h={'calc(150vh - 20px)'}
         p={1}
         borderRadius={gstyle.radiusform}
       >
@@ -187,7 +191,7 @@ export default function DescFormPage(props) {
             />
           </Box>
           <Box mr={3}>
-          <Button
+            <Button
               w={'100%'}
               bgColor={'#9999ff'}
               color={'white'}
@@ -219,7 +223,7 @@ export default function DescFormPage(props) {
           <Grid
             templateRows="repeat(4, 1fr)"
             templateColumns="repeat(4, 1fr)"
-            h={'100vh'}
+            h={'130vh'}
             gap={2}
           >
             <GridItem
@@ -230,7 +234,7 @@ export default function DescFormPage(props) {
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -253,7 +257,7 @@ export default function DescFormPage(props) {
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -276,7 +280,7 @@ export default function DescFormPage(props) {
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -299,7 +303,7 @@ export default function DescFormPage(props) {
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -314,14 +318,14 @@ export default function DescFormPage(props) {
               {/* <Divider mt={3} mb={2} /> */}
             </GridItem>
             <GridItem
-              rowSpan={1}
+              rowSpan={2}
               colSpan={1}
               bg="#f1f5f9"
               p={gstyle.p}
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -333,18 +337,21 @@ export default function DescFormPage(props) {
                   }}
                 />
               </Box>
-              {/* <Divider mt={3} mb={2} /> */}
+              <Divider mt={3} mb={2} />
+              <Box>
+                <HorizontalBarChart chartData={data_ParcMobile} />
+              </Box>
             </GridItem>
 
             <GridItem
-              rowSpan={1}
+              rowSpan={2}
               colSpan={1}
               bg="#f1f5f9"
               p={gstyle.p}
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -356,10 +363,11 @@ export default function DescFormPage(props) {
                   }}
                 />
               </Box>
-              {/* <Divider mt={3} mb={2} /> */}
+              <Divider mt={3} mb={2} />
+              <Box>
+                <HorizontalBarChart2 chartData={data_ParcMobile} />
+              </Box>
             </GridItem>
-            
-            
 
             {/* <GridItem
               rowSpan={50}
@@ -399,14 +407,14 @@ export default function DescFormPage(props) {
               </HStack>
             </GridItem> */}
             <GridItem
-              rowSpan={1}
+              rowSpan={2}
               colSpan={1}
               bg="#f1f5f9"
               p={gstyle.p}
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -418,17 +426,20 @@ export default function DescFormPage(props) {
                   }}
                 />
               </Box>
-              {/* <Divider mt={3} mb={2} /> */}
+              <Divider mt={3} mb={2} />
+              <Box>
+                <PieCharts2 chartData={data_ParcMobile} />
+              </Box>
             </GridItem>
             <GridItem
-              rowSpan={1}
+              rowSpan={2}
               colSpan={1}
               bg="#f1f5f9"
               p={gstyle.p}
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={"KPI"} size={16} />
+                <TagTitle title={'KPI'} size={16} />
                 <Divider mt={2} />
                 <ValuesData
                   iconType="up"
@@ -440,7 +451,10 @@ export default function DescFormPage(props) {
                   }}
                 />
               </Box>
-              {/* <Divider mt={3} mb={2} /> */}
+              <Divider mt={3} mb={2} />
+              <Box>
+                <PieCharts chartData={data_ParcMobile} />
+              </Box>
             </GridItem>
             <GridItem
               rowSpan={60}
@@ -450,11 +464,16 @@ export default function DescFormPage(props) {
               borderRadius={gstyle.radius}
             >
               <Box>
-                <TagTitle title={'Evolution du budget consomé'} size={16} />
+                <TagTitle title={'Evolution de KPIs'} size={16} />
               </Box>
               <Divider mt={3} mb={2} />
               <Box w={'100%'} h={'100%'} mt={5}>
-                <LineChartsParcOM />
+                <TabsPanelItem
+                  fSize={12}
+                  title1={'Variation KPI1'}
+                  tab1={<LineChartsParcOM />}
+                  title2={'Variation KPI1'} tab2={<LineChartsParcOMV2 />}
+                />
               </Box>
             </GridItem>
             <GridItem

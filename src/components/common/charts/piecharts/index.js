@@ -107,10 +107,10 @@ const options_dst = {
 const options = {
   layout: {
     padding: {
-      right: 0,
+      right: 40,
       left: 0,
       top: 10,
-      bottom: 40,
+      bottom: 100,
     },
   },
 
@@ -122,7 +122,7 @@ const options = {
   plugins: {
     title: {
       display: true,
-      text: 'Pourcentage budgétaire',
+      text: 'Part de KPIs',
       padding: {
         top: 0,
         bottom: 20,
@@ -163,10 +163,10 @@ const options = {
 const options2 = {
   layout: {
     padding: {
-      right: 0,
+      right: 40,
       left: 0,
       top: 10,
-      bottom: 40,
+      bottom: 100,
     },
   },
 
@@ -178,7 +178,7 @@ const options2 = {
   plugins: {
     title: {
       display: true,
-      text: 'Pourcentage budgétaire',
+      text: 'Part de KPIs',
       padding: {
         top: 0,
         bottom: 20,
@@ -345,11 +345,11 @@ const options_drj_second = {
 };
 
 export const PieCharts = ({ chartData }) => {
-  return <Pie data={chartData} options={options} />;
+  return <Pie width={10} height={10} data={chartData} options={options} />;
 };
 
 export const PieCharts2 = ({ chartData }) => {
-  return <Pie data={chartData} options={options2} />;
+  return <Pie width={10} height={10} data={chartData} options={options2} />;
 };
 
 export const PieChartsDst = ({ chartData }) => {

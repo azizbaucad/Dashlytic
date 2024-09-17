@@ -3,8 +3,8 @@ module.exports = {
   themePagesMessages: {
     login: {
       heading: {
-        title: 'Bienvenue à Gov\'Dash',
-        subtitle: 'Vos données à portée de main',
+        title: 'Bienvenue à Dash\'lytic',
+        subtitle: 'Prenez de l\'avance dans la prise de décision',
       },
       specifics: {
         forgotten_password: 'Forgot password?',

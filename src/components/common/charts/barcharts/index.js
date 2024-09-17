@@ -32,7 +32,7 @@ export const options2 = {
     padding: {
       left: 0,
       right: 30,
-      top: 0,
+      top: 10,
       bottom: 0,
     },
   },
@@ -53,8 +53,8 @@ export const options2 = {
       display: false,
     },
     title: {
-      display: false,
-      text: 'Pourcentage indice BES',
+      display: true,
+      text: 'Part de KPIs',
       padding: {
         top: 0,
         bottom: 30,
@@ -137,7 +137,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Pourcentage du Nbre. de visites',
+      text: 'Part de KPIs',
       padding: {
         top: 0,
         bottom: 30,

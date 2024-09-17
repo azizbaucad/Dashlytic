@@ -141,10 +141,105 @@ const options = {
 
 const simulatedData = {
   caRechargeArrayData: ['Jan', 'Fev', 'Mars', 'Avr', 'Mai', 'Juin', 'Juillet', 'Aout'],
-  dataSetCa: [730000000000, 630000000000, 530000000000, 430000000000, 330000000000, 230000000000, 130000000000, 30000000000],// Objectifs proches des valeurs réelles
-  labelNameCa: 'Budget consommé',
+  dataSetCa: [730000000000, 630000000000, 530000000000, 430000000000, 330000000000, 230000000000, 130000000000, 30000000000],
+  dataSetCb: [30000000000, 130000000000, 230000000000, 330000000000, 430000000000, 530000000000, 630000000000, 730000000000],// Objectifs proches des valeurs réelles
+  labelNameCa: 'KPI',
 };
 
+
+export const LineChartsParcOMV2= () => {
+  const [caRechargeChartData, setCaRechargeChartData] = useState({
+    caRechargeArrayData: [],
+    dataSetCa: [],
+  });
+
+  useEffect(() => {
+    // Simulation des données
+    const newCaRechargeChartData = {
+      caRechargeArrayData: simulatedData.caRechargeArrayData,
+      dataSetCa: simulatedData.dataSetCb,
+    };
+    setCaRechargeChartData(newCaRechargeChartData);
+  }, []);
+
+  // Mapping des données pour le graphique
+  const data_ = {
+    labels: caRechargeChartData.caRechargeArrayData,
+    datasets: [
+      {
+        label: 'KPI',
+        data: caRechargeChartData.dataSetCa,
+        fill: false,
+        backgroundColor: '#14b8a6',
+        borderColor: '#14b8a6',
+      },
+    ],
+  };
+
+  const options = {
+    scales: {
+      x: {
+        border: {
+          display: true,
+        },
+        ticks: {
+          font: {
+            size: 12, // Taille de la police pour l'axe X
+          },
+        },
+        grid: {
+          color: 'rgb(0, 0, 0, 0.02)',
+        },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: formatNumber, // Use formatNumber function for y-axis ticks
+          beginAtZero: false,
+          font: {
+            size: 12,
+          },
+        },
+        border: {
+          display: true,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        align: 'end',
+        labels: {
+          color: '#666',
+          usePointStyle: true,
+          pointStyle: function () {
+            return 'rectRounded';
+          },
+          boxHeight: 8,
+          boxWidth: 16,
+          padding: 5,
+          borderWidth: 1,
+        },
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+      },
+      title: {
+        display: false,
+      },
+      datalabels: {
+        display: false,
+        labels: {
+          display: true,
+        },
+      },
+    },
+  };
+
+  return <Line data={data_} options={options} />;
+};
 
 export const LineChartsParcOM = () => {
   const [caRechargeChartData, setCaRechargeChartData] = useState({
@@ -166,11 +261,11 @@ export const LineChartsParcOM = () => {
     labels: caRechargeChartData.caRechargeArrayData,
     datasets: [
       {
-        label: 'Budget consommé',
+        label: 'KPI',
         data: caRechargeChartData.dataSetCa,
         fill: false,
-        backgroundColor: '#991b1b',
-        borderColor: '#991b1b',
+        backgroundColor: '#fb7185',
+        borderColor: '#fb7185',
       },
     ],
   };

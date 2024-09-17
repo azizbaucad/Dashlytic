@@ -1,361 +1,525 @@
 import {
+  Box,
   Button,
   Divider,
+  Flex,
+  Grid,
+  GridItem,
   HStack,
+  Select,
   Stack,
   Text,
   VStack,
-  useToast,
 } from '@chakra-ui/react';
-import { FormInput, FormSubmit } from '@components/common/input/FormInput';
-import { descSchema } from '@schemas';
-import { forms, routes } from '@theme';
-import { descFormHandler } from '@utils/handlers';
-import { mapFormInitialValues } from '@utils/tools/mappers';
-import { Formik } from 'formik';
+import { DashboardLayout } from '@components/layout/dashboard';
+import { colors, direction, gird, hightlightStatus } from '@theme';
+import { getToken } from 'next-auth/jwt';
+import { PageTitle } from '@components/common/title/page';
+import { ButtonBack } from '@components/common/button';
+import { DescForm } from '@components/forms/desc';
 import { useRouter } from 'next/router';
-import { Fragment } from 'react';
-import { FiArrowRight } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
+import { getElement } from 'pages/api/global';
+import { getLastWeekList } from '@utils/services/date';
+import { AiFillHome } from 'react-icons/ai';
+import { TiCloudStorage, TiCloudStorageOutline } from 'react-icons/ti';
+import { DMenuButton } from '@components/common/menu_button';
+import { BsPlusLg } from 'react-icons/bs';
+import { TagTitle } from '@components/common/title';
+import { ValuesData } from '@components/common/data/values';
+import { GiCash } from 'react-icons/gi';
+import {
+  HorizontalBarChart,
+  HorizontalBarChart2,
+} from '@components/common/charts/barcharts';
+import { scroll_customize } from '@components/common/styleprops';
+import {
+  HightlightContent,
+  HightlightHeader,
+} from '@components/common/data/hightlight';
+import {
+  DefaultHighlightstatus,
+  highlightStatusStyle,
+} from '@utils/schemas/src/highlight';
+import moment from 'moment';
+import { DataTableGenTest } from '@components/common/tables';
+import { FcLineChart } from 'react-icons/fc';
+import { LineChartsParcOM, LineChartsParcOMV2 } from '@components/common/charts/linecharts';
+import { PieCharts, PieCharts2 } from '@components/common/charts/piecharts';
+import { TabsPanelItem } from '@components/common/tabs';
 
-export const DescForm = (props) => {
+export default function DescFormPage(props) {
   const router = useRouter();
+  const [descData, setDescData] = useState();
+  const week = router.query.week;
+  const [selectedWeek, setSelectedWeek] = useState(week);
 
-  const goBack = () => router.back();
-  const {
-    descForm: {
-      week,
-      structureValue,
-      projetValue,
-      currentYearValue,
-      associatedMinisterValue,
-      ownerMinisterValue,
-      dateMettingValue,
-      codeMettingValue,
-      typeMettingValue,
-      mettingValue,
-      codeDirectiveValue,
-      typeDirectiveValue,
-      directiveValue,
-      startRealDateValue,
-      endRealDateValue,
-      limitDateValue,
-      previousLimitDateValue,
-      stateValue,
-      evitementSelfcareValue,
-      submit,
+  //Define the status lis
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const { realizes, difficults, coordinationPoint } = hightlightStatus;
+  const statusList = [realizes, difficults, coordinationPoint];
+
+  const simulatedData = [
+    {
+      id: 1,
+      title: 'Lorem ipsum dolor sit amet',
+      description: 'Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      direction: 'Lorem ipsum',
+      status: { name: 'realizes', label: 'Réalisés' },
+      date: '2024-08-01',
     },
-  } = forms.inputs;
+    {
+      id: 2,
+      title: 'Ut enim ad minim veniam',
+      description: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      direction: 'Lorem ipsum',
+      status: { name: 'difficults', label: 'Difficultés' },
+      date: '2024-08-03',
+    },
+    {
+      id: 3,
+      title: 'Duis aute irure dolor in reprehenderit',
+      description: 'In voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+      direction: 'Lorem ipsum',
+      status: { name: 'difficults', label: 'Difficultés' },
+      date: '2024-08-03',
+    },
+  ];
+  
 
-  const valuesInitial = props.descForm ?? null;
-  const toast = useToast();
+  const displayHighlight = (highligh, i) => (
+    <HightlightContent
+      key={i}
+      title={`${highligh.direction} • ${highligh.title}`}
+      body={highligh.description}
+      iconBgColor={highlightStatusStyle(highligh.status?.name)?.style.iconColor}
+      date={moment(highligh.date).format('DD-MM-YYYY')}
+      bgColor={highlightStatusStyle(highligh.status?.name)?.style.bgColor}
+      icon={highlightStatusStyle(highligh.status?.name)?.icon}
+    />
+  );
+
+  const { desc } = direction;
+  const gstyle = gird.style;
+
+  const weekOption = getLastWeekList().map((date) => {
+    return { value: date.week + '-' + date.year, name: date.week };
+  });
+
+  const getDescDataByWeek = () => {
+    const week_num = selectedWeek?.split('-')[0];
+    const week_year = selectedWeek?.split('-')[1];
+    const params = '?week=' + week_num + '&year=' + week_year;
+    getElement('v1/descdata/week-data' + params, null)
+      .then((res) => {
+        if (res.data) {
+          setDescData(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log('Error:::', err);
+      });
+  };
+
+  useEffect(() => {
+    getDescDataByWeek();
+  }, [selectedWeek]);
+
+  const onDMenuChange = (value) => {
+    if (value == 'data') router.push('dashboard/form/' + selectedWeek);
+  };
+
+  const ParcDataMobile = [
+    {
+      id: 1,
+      part: 'Kpi1',
+      percent: 40,
+    },
+    {
+      id: 2,
+      part: 'Kpi2',
+      percent: 30,
+    },
+    {
+      id: 3,
+      part: 'Kpi3',
+      percent: 30,
+    },
+  ];
+
+  const backColor = ['#083344', '#083344', '#083344', '#083344'];
+
+  const data_ParcMobile = {
+    labels: ParcDataMobile?.map((item) => item.part),
+    datasets: [
+      {
+        barThickness: ParcDataMobile?.map((item) =>
+          isNaN(item.percent) ? 0.1 : 20
+        ),
+        barPercentage: 0,
+        label: 'Pourcentage',
+        data: ParcDataMobile?.map((item) =>
+          isNaN(item.percent) ? 0.1 : item.percent
+        ),
+        backgroundColor: backColor,
+      },
+    ],
+  };
 
   return (
-    <VStack w={'100%'} alignItems="start">
-      <Formik
-        alignItems="start"
-        enableReinitialize={true}
-        initialValues={valuesInitial ?? mapFormInitialValues(descSchema._nodes)}
-        validationSchema={descSchema}
-        onSubmit={(values, { setSubmitting, setFieldError }) => {
-          descFormHandler({
-            directionId: props.directionId,
-            descId: valuesInitial?.id ?? null,
-            data: values,
-            setSubmitting,
-            closeModal: props.onClose,
-            //getHightlight: props.getHightlight,
-            week: props.selectedWeek,
-            toast: toast,
-            setFieldError,
-            goBack,
-            redirectOnSuccess: routes.pages.dashboard.initial,
-          });
-        }}
+    <DashboardLayout activeMenu={'account-ofms'}>
+      <Stack
+        mt={1}
+        w={'100%'}
+        bg="#cbd5e1"
+        borderColor="#bfbfbf"
+        h={'calc(150vh - 20px)'}
+        p={1}
+        borderRadius={gstyle.radiusform}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          isSubmitting,
-        }) => (
-          <Fragment>
-            <Text
-              fontSize={'16px'}
+        <HStack p={1} mt={1} justifyContent={'space-between'}>
+          {/* <ButtonBack color="gray"  /> */}
+          <Box ml={1}>
+            <PageTitle
+              titleSize={16}
+              titleColor={'black'}
+              subtitleColor={'#404245'}
+              subtitleSize={16}
+              icon={<FcLineChart size={26} color="#9999ff" />}
+              title={'Dashboard'}
+              subtitle={'/ Tbord Département'}
+            />
+          </Box>
+          <Box mr={3}>
+            <Button
+              w={'100%'}
+              bgColor={'#9999ff'}
+              color={'white'}
+              h={'2.5rem'}
+              type="submit"
+              disabled
+              fontWeight={500}
               fontFamily="'Roboto mono', sans-serif"
-              fontWeight={'550'}
-              mt={2}
+              _hover={{
+                bgColor: '#9999ff', // Le hover reste la même couleur pour un effet "désactivé"
+                cursor: 'not-allowed', // Changer le curseur pour indiquer que le bouton est désactivé
+              }}
+              _disabled={{
+                bgColor: '#9999ff', // Conserver la couleur de fond pour le bouton désactivé
+                color: 'white', // Garder la couleur du texte
+                cursor: 'not-allowed', // Ajouter un curseur désactivé
+                _hover: {
+                  bgColor: '#9999ff', // Aucune modification de couleur au hover
+                },
+              }}
             >
-              {' '}
-              Team projet{' '}
-            </Text>
-            <Divider />
+              Appliquer les filtres
+            </Button>
+          </Box>
+        </HStack>
+        <Divider mt={1} mb={1} />
 
-            <HStack w={'100%'} gap={2} alignContent="start" h={'3.5rem'} mb={2}>
-              <FormInput
-                py={1}
-                select={true}
-                options={props.currentYearOption}
-                {...currentYearValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                type="text"
-                {...associatedMinisterValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                type="text"
-                {...ownerMinisterValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-            </HStack>
-            {/* <Divider mt={0} mb={0} color={''} /> */}
-            <Text
-              fontSize={'16px'}
-              fontFamily="'Roboto mono', sans-serif"
-              fontWeight={'550'}
-              mt={2}
+        <Stack p={3}>
+          <Grid
+            templateRows="repeat(4, 1fr)"
+            templateColumns="repeat(4, 1fr)"
+            h={'130vh'}
+            gap={2}
+          >
+            <GridItem
+              rowSpan={1}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
             >
-              {' '}
-              Rencontre{' '}
-            </Text>
-            <Divider />
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              {/* <Divider mt={3} mb={2} /> */}
+            </GridItem>
 
-            <HStack w={'100%'} gap={2} alignContent="start" h={'3.5rem'} mb={2}>
-              <FormInput
-                py={1}
-                type="date"
-                {...dateMettingValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                type="text"
-                {...codeMettingValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                type="text"
-                {...typeMettingValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                textArea={true}
-                {...mettingValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-            </HStack>
-
-            <Text
-              fontSize={'16px'}
-              fontFamily="'Roboto mono', sans-serif"
-              fontWeight={'550'}
-              mt={2}
+            <GridItem
+              rowSpan={1}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
             >
-              {' '}
-              Directive{' '}
-            </Text>
-            <Divider />
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              {/* <Divider mt={3} mb={2} /> */}
+            </GridItem>
 
-            <HStack w={'100%'} gap={2} alignContent="start" h={'3.5rem'} mb={2}>
-              <FormInput
-                py={0}
-                type="text"
-                {...codeDirectiveValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                type="text"
-                {...typeDirectiveValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                textArea={true}
-                {...directiveValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-            </HStack>
-
-            <Text
-              fontSize={'16px'}
-              fontFamily="'Roboto mono', sans-serif"
-              fontWeight={'550'}
-              mt={2}
+            <GridItem
+              rowSpan={1}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
             >
-              {' '}
-              Détails directives{' '}
-            </Text>
-            <Divider />
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              {/* <Divider mt={3} mb={2} /> */}
+            </GridItem>
 
-            <HStack w={'100%'} gap={2} alignContent="start" h={'3.5rem'} mb={2}>
-              <FormInput
-                py={1}
-                type="date"
-                {...startRealDateValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
+            <GridItem
+              rowSpan={1}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              {/* <Divider mt={3} mb={2} /> */}
+            </GridItem>
+            <GridItem
+              rowSpan={2}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <Box>
+                <HorizontalBarChart chartData={data_ParcMobile} />
+              </Box>
+            </GridItem>
 
-              <FormInput
-                py={1}
-                type="date"
-                {...endRealDateValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
+            <GridItem
+              rowSpan={2}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <Box>
+                <HorizontalBarChart2 chartData={data_ParcMobile} />
+              </Box>
+            </GridItem>
 
-              <FormInput
-                py={1}
-                type="date"
-                {...limitDateValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
+            {/* <GridItem
+              rowSpan={50}
+              colSpan={3}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'Table des direcives'} size={16} />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <HStack justifyContent={'space-between'} alignItems="center">
+                <HStack justifyContent={'space-between'} w={'100%'}>
+                  <DataTableGenTest />
+                </HStack>
+              </HStack>
+            </GridItem>
+            <GridItem
+              rowSpan={50}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle
+                  title={"Etat d'avancement des directives"}
+                  size={16}
+                />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <HStack justifyContent={'space-between'} alignItems="center">
+                <HStack justifyContent={'space-between'}>
+                  <HorizontalBarChart2 chartData={data_ParcMobile} />
+                </HStack>
+              </HStack>
+            </GridItem> */}
+            <GridItem
+              rowSpan={2}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <Box>
+                <PieCharts2 chartData={data_ParcMobile} />
+              </Box>
+            </GridItem>
+            <GridItem
+              rowSpan={2}
+              colSpan={1}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'KPI'} size={16} />
+                <Divider mt={2} />
+                <ValuesData
+                  iconType="up"
+                  value={60}
+                  delta={{
+                    label: 'Last Year',
+                    value: '+5%',
+                    valueColor: '#02bc7d',
+                  }}
+                />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <Box>
+                <PieCharts chartData={data_ParcMobile} />
+              </Box>
+            </GridItem>
+            <GridItem
+              rowSpan={60}
+              colSpan={2}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+            >
+              <Box>
+                <TagTitle title={'Evolution de KPIs'} size={16} />
+              </Box>
+              <Divider mt={3} mb={2} />
+              <Box w={'100%'} h={'100%'} mt={5}>
+                <TabsPanelItem
+                  fSize={12}
+                  title1={'Variation KPI1'}
+                  tab1={<LineChartsParcOM />}
+                  title2={'Variation KPI1'} tab2={<LineChartsParcOMV2 />}
+                />
+              </Box>
+            </GridItem>
+            <GridItem
+              rowSpan={60}
+              colSpan={2}
+              bg="#f1f5f9"
+              p={gstyle.p}
+              borderRadius={gstyle.radius}
+              overflow="auto"
+              css={scroll_customize}
+            >
+              <Stack mt={0}>
+                <HightlightHeader status={DefaultHighlightstatus} />
+              </Stack>
 
-              <FormInput
-                py={1}
-                type="date"
-                {...previousLimitDateValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-
-              <FormInput
-                py={1}
-                select={true}
-                options={props.statusOption}
-                {...stateValue}
-                {...{
-                  errors,
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  values,
-                }}
-              />
-            </HStack>
-
-            <HStack w={'100%'} gap={2} py={10}>
-              <Button
-                onClick={goBack}
-                bgColor="white"
-                w={'50%'}
-                h={'2.3rem'}
-                border="1px"
-                borderColor="gray.200"
-              >
-                Annuler
-              </Button>
-              <FormSubmit
-                {...{
-                  touched,
-                  errors,
-                  handleSubmit,
-                  isSubmitting,
-                }}
-                {...submit}
-                /* rightIcon={<FiArrowRight size={'1.5rem'} />} */
-              />
-            </HStack>
-          </Fragment>
-        )}
-      </Formik>
-    </VStack>
+              <Divider mb={3} mt={3} />
+              <HStack mb={3} justifyContent={'space-between'}>
+                <Box>
+                  <Box mr={1} bg={'#fff'} borderRadius={6}>
+                    <Select
+                      width={'15rem'}
+                      type="text"
+                      value={selectedStatus}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                    >
+                      <option key="all" value="all">
+                        Tous les faits marquants
+                      </option>
+                      {statusList.map((option, index) => (
+                        <option key={index} value={option.name}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </Box>
+                </Box>
+              </HStack>
+              <Stack mt={2}>
+                {simulatedData.map((highlight, i) =>
+                  displayHighlight(highlight, i)
+                )}
+              </Stack>
+            </GridItem>
+          </Grid>
+        </Stack>
+      </Stack>
+    </DashboardLayout>
   );
-};
+}
